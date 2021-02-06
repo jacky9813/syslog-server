@@ -1,0 +1,10 @@
+{
+    "host": "0.0.0.0",
+    "port": "514/udp",
+    "dblink": "mongodb://localhost:27017/",
+    "dbname": "syslog",
+    "filter": {
+        "severity": 7,
+        "facility": []
+    }
+}

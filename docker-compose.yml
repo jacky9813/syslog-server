@@ -1,0 +1,14 @@
+version: "3"
+services:
+  syslog-server:
+    # restart: unless-stopped
+    container_name: syslog-server
+    build: ./
+    image: syslog-server:latest
+    ports:
+      - "514:514/udp"
+      - "8765:80/tcp"
+    volumes:
+      - "./conf/syslog-server.json:/syslog-server/config.json"
+      - "./conf/httpd.conf:/usr/local/apache2/conf/httpd.conf"
+      - "./db:/var/lib/mongodb"

@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+#
+# Get log entries from database
+#
+# GET Parameters
+# ts=<int> : time range start (timestamp in ms)
+# tf=<int> : time range stop (timestamp in ms)
+# host=<string> : search host, multi value supported
+# nosev=<int> : exclude severity, 8bit value, MSB=Debug ----> LSB=Emergency, 0=exclude, 1=include, default=255 (0xFF)
+# nofac=<int> : exclude severity, 24bit value, MSB=Local7 ----> LSB=Kernel, 0=exclude, 1=include, default=16777215 (0xFFFFFF)
+
+import os
+import cgi
+import json
+import pymongo
+from urllib.parse import parse_qs
+
+settings = {
+    "dblink": "mongodb://localhost:27017/",
+    "dbname": "syslog"
+}
+
+try:
+    with open("/syslog-server/config.json", mode="r") as fd:
+        settings = {**settings, **json.load(fd)}
+except:
+    pass
+
+mongo = pymongo.MongoClient(settings["dblink"])
+db = mongo[settings["dbname"]]
+syslogTable = db["syslog"]
+
+print("Content-Type: application/json; charset=utf-8")
+print("")
+filter = {"timestamp": {"$exists": True}}
+
+# Resolving Filters
+qs = parse_qs(os.environ["QUERY_STRING"])
+qs_keys = qs.keys()
+if "ts" in qs_keys:
+    try:
+        filter["timestamp"]["$gte"] = int(qs["ts"][0])
+    except:
+        pass
+if "tf" in qs_keys:
+    try:
+        filter["timestamp"]["$lte"] = int(qs["tf"][0])
+    except:
+        pass
+if "host" in qs_keys:
+    filter["data.HEAD.hostname"] = {"$in": qs["host"]}
+if "nosev" in qs_keys:
+    try:
+        nosev_i = int(qs["nosev"][0])
+        nosev = []
+        for i in range(8):
+            if not nosev_i & (0x01 << i):
+                # 1 is include, 0 is exclude
+                nosev.append(i)
+        filter["data.PRI_SEVERITY"] = {"$nin": nosev}
+    except:
+        pass
+if "nofac" in qs_keys:
+    try:
+        nofac_i = int(qs["nofac"][0])
+        nofac = []
+        for i in range(24):
+            if not nofac_i & (0x01 << i):
+                # 1 is include, 0 is exclude
+                nofac.append(i)
+        filter["data.PRI_FACILITY"] = {"$nin": nofac}
+    except:
+        pass
+
+# Applying filter
+# Output only top 500 entries
+out = [x for x in syslogTable.find(filter).sort("timestamp", -1)][:500]
+
+# ObjectID from MongoDB need to be converted into string before output
+for i in range(len(out)):
+    out[i]["_id"] = str(out[i]["_id"])
+print(json.dumps(out))
