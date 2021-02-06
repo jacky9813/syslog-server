@@ -26,3 +26,8 @@ $ sudo docker-compose build && sudo docker-compose up -d
 
 ## Volumes
 Take a look at docker-compose.yml. Most useful volumes are specified in there.
+
+## Syslog input filter
+src/syslog-server/filter.py has basic filter function. Change conf/syslog-server.json can adjust verbosity(severity) and facility filtering parameter.
+
+Optionally src/syslog-server/filter.py can be override using volume.
