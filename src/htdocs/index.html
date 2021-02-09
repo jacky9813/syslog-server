@@ -6,11 +6,10 @@
         <link rel="stylesheet" href="style.css">
         <script src="jquery.min.js"></script>
         
-        <!-- <script src="react.production.min.js"></script>
-        <script src="react-dom.production.min.js"></script> -->
-        <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
-        <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-        <script src="babel.min.js"></script>
+        <script src="react.production.min.js"></script>
+        <script src="react-dom.production.min.js"></script>
+        
+        <!-- strftime.min.js Source from https://github.com/samsonjs/strftime -->
         <script src="strftime.min.js"></script>
     </head>
     <body>
@@ -18,9 +17,17 @@
             <button class="foldButton">Filter</button>
             <div class="foldcontent" id="filter">
                 <div class="filter" id="date">
-                    Time:<br>
-                    From:<input type="datetime-local" id="filter_dtfrom"><br>
-                    To:<input type="datetime-local" id="filter_dtto">
+                    Time<br>
+                    <table>
+                        <tr>
+                            <td>From:</td>
+                            <td><input type="datetime-local" id="filter_dtfrom"></td>
+                        </tr>
+                        <tr>
+                            <td>To:</td>
+                            <td><input type="datetime-local" id="filter_dtto"></td>
+                        </tr>
+                    </table>
                 </div>
                 <div class="filter" id="hostname">
 
@@ -32,6 +39,7 @@
 
                 </div>
                 <div class="filter">
+                    <button id="filter_updatehost_btn">Update Hosts</button>
                     <button id="filter_apply_btn">Apply Filter</button>
                 </div>
             </div>
@@ -48,6 +56,6 @@
                 e.target.parentElement.querySelector("div.foldcontent").style.display = (a=="none"||a==""?"flex":"none");
             });
         </script>
-        <script src="app.babel.js" type="text/babel"></script>
+        <script src="app.min.js"></script>
     </body>
 </html>
