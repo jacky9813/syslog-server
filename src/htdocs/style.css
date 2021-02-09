@@ -1,9 +1,16 @@
+button{
+    padding: 5px 10px;
+}
+
+/** Filter Specific Style */
 div.filter{
     display:inline-block;
     vertical-align: top;
     border: #CCC 1px solid;
     padding: 5px 10px;
     margin: 5px;
+    font-size: small;
+    line-height: 1;
 }
 
 .filter li {
@@ -12,11 +19,11 @@ div.filter{
 .filter ul{
     padding: 0;
 }
-
-button{
-    padding: 5px 10px;
+.filter button{
+    display: block;
 }
 
+/** Foldables */
 div.fold > div.foldcontent{
     display:none;
 }
@@ -29,9 +36,47 @@ div.fold{
     border-radius: 5px;
 }
 
+/** Data table Style */
 div.content table{
     border-collapse: collapse;
 }
 div.content th, div.content td{
     border: 1px solid black;
 }
+div.content td{
+    padding: 5px 10px;
+}
+/** Data row highlighting */
+tr[data-severity="0"]{
+    background: purple;
+    color: white;
+    font-weight: bolder;
+}
+tr[data-severity="1"]{
+    background: magenta;
+    color: white;
+    font-weight: bolder;
+}
+tr[data-severity="2"]{
+    background: red;
+    color: white;
+    font-weight: bolder;
+}
+tr[data-severity="3"]{
+    background: darkorange;
+    font-weight: bolder;
+    color: white;
+}
+tr[data-severity="4"]{
+    background: yellow;
+}
+tr[data-severity="5"]{
+    background: #AFA;
+}
+tr[data-severity="6"]{
+    background: #BBf;
+}
+tr[data-severity="7"]{
+    background: #CCC;
+}
+
