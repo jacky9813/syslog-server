@@ -1,0 +1,19 @@
+{
+  "name": "babel-compile",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "babel src/app.babel.js --out-file app.js",
+    "minify": "minify app.js --out-file ../src/htdocs/app.min.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.12.13",
+    "@babel/core": "^7.12.13",
+    "@babel/preset-env": "^7.12.13",
+    "@babel/preset-react": "^7.12.13",
+    "babel-minify": "^0.5.1"
+  }
+}
