@@ -73,8 +73,7 @@ if "nofac" in qs_keys:
         pass
 
 # Applying filter
-# Output only top 500 entries
-out = [x for x in syslogTable.find(filter).sort("timestamp", -1)][:500]
+out = [x for x in syslogTable.find(filter).sort("timestamp", -1)]
 
 # ObjectID from MongoDB need to be converted into string before output
 for i in range(len(out)):
