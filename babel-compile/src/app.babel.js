@@ -7,6 +7,53 @@
     function revKeyVal(i){var o={};Object.keys(i).forEach(k=>{o[i[k]]=k;});return o;}
     var facilities_str = revKeyVal(facilities);
     var severitylevels_str = revKeyVal(severitylevels);
+    var charts = {
+        "facility": new Chart($("#stat_facility_chart")[0], {
+            type: "pie",
+            data: {
+                labels: Object.keys(facilities),
+                datasets: [{
+                    label: "Facility",
+                    data: new Array(Object.keys(facilities).length).fill(0)
+                }]
+            },
+            options:{
+                legend:{
+                    display: false
+                }
+            }
+        }),
+        "severity": new Chart($("#stat_severity_chart")[0], {
+            type: "pie",
+            data: {
+                labels: Object.keys(severitylevels),
+                datasets: [{
+                    label: "Severity",
+                    data: new Array(Object.keys(severitylevels).length).fill(0)
+                }]
+            },
+            options:{
+                legend:{
+                    display: false
+                }
+            }
+        }),
+        "host": new Chart($("#stat_host_chart")[0], {
+            type: "pie",
+            data: {
+                labels: [],
+                datasets: [{
+                    label: "Host",
+                    data: []
+                }]
+            },
+            options:{
+                legend:{
+                    display: false
+                }
+            }
+        })
+    };
 
     class FilterFacility extends React.Component {
         constructor(props){
@@ -133,6 +180,45 @@
     function updateData(){
         fetch("/cgi-bin/list?"+getFilter().toString()).then(function(resp){
             resp.json().then(function(data){
+                // Generate charts
+                function randomColor(){
+                    function random8bit(){
+                        return Math.floor(Math.random() * 256);
+                    }
+                    return "rgb(" + (new Array(3).fill(0).map(function(a){return random8bit().toString()})).join(", ") + ")";
+                }
+                charts["facility"].data.datasets[0].data = data.reduce((acc, entry)=>{
+                    acc[entry.data.PRI_FACILITY] += 1;
+                    return acc;
+                }, new Array(Object.keys(facilities).length).fill(0));
+                charts["severity"].data.datasets[0].data = data.reduce((acc, entry)=>{
+                    acc[entry.data.PRI_SEVERITY] += 1;
+                    return acc;
+                }, new Array(Object.keys(severitylevels).length).fill(0));
+                var hosts = data.reduce((acc, entry)=>{
+                    if(acc == null){
+                        acc = {};
+                    }
+                    if(Object.keys(acc).indexOf(entry.data.HEAD.hostname) < 0){
+                        acc[entry.data.HEAD.hostname] = 1;
+                    } else {
+                        acc[entry.data.HEAD.hostname] += 1;
+                    }
+                    return acc;
+                }, {});
+                charts["host"].data.labels = Object.keys(hosts);
+                charts["host"].data.datasets[0].data = charts["host"].data.labels.map((hn)=>{
+                    return hosts[hn];
+                });
+                
+                Object.keys(charts).forEach((chart_k)=>{
+                    // Regenerate chart colors
+                    charts[chart_k].data.datasets[0].backgroundColor = (new Array(charts[chart_k].data.datasets[0].data.length)).fill(0).map((a)=>{return randomColor();});
+                    charts[chart_k].update();
+                    charts[chart_k].render();
+                });
+
+                // Generate table
                 var outHtml = data.map(entry=>{
                     return <Syslog key={entry._id} data={entry.data} timestamp={entry.timestamp}></Syslog>
                 });
@@ -149,4 +235,38 @@
     updateData();
     $("#filter_apply_btn").on("click", updateData);
     $("#filter_updatehost_btn").on("click", generateFilter);
+    $("#filter_dtfrom")[0].value = strftime("%Y-%m-%dT%H:%M:%S", new Date(Date.now() - 86400000 * 7));
+    $("#filter_dtto")[0].value = strftime("%Y-%m-%dT%H:%M:%S", new Date(Date.now()));
+    $("#filter_lastHour").on("click", function(){
+        var dt = new Date();
+        var df = new Date();
+        df.setHours(df.getHours()-1);
+        $("#filter_dtfrom")[0].value = strftime("%Y-%m-%dT%H:%M:%S", df);
+        $("#filter_dtto")[0].value = strftime("%Y-%m-%dT%H:%M:%S", dt);
+    });
+    $("#filter_24hrs").on("click", function(){
+        var dt = new Date();
+        var df = new Date();
+        df.setHours(df.getHours()-24);
+        $("#filter_dtfrom")[0].value = strftime("%Y-%m-%dT%H:%M:%S", df);
+        $("#filter_dtto")[0].value = strftime("%Y-%m-%dT%H:%M:%S", dt);
+    });
+    $("#filter_lastwk").on("click", function(){
+        var dt = new Date();
+        var df = new Date();
+        df.setHours(df.getHours()-24*7);
+        $("#filter_dtfrom")[0].value = strftime("%Y-%m-%dT%H:%M:%S", df);
+        $("#filter_dtto")[0].value = strftime("%Y-%m-%dT%H:%M:%S", dt);
+    });
+    $("#filter_thismonth").on("click", function(){
+        var dt = new Date();
+        var df = new Date();
+        df.setDate(1);
+        df.setHours(0);
+        df.setMinutes(0);
+        df.setSeconds(0);
+        $("#filter_dtfrom")[0].value = strftime("%Y-%m-%dT%H:%M:%S", df);
+        $("#filter_dtto")[0].value = strftime("%Y-%m-%dT%H:%M:%S", dt);
+    });
+    
 })()

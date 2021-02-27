@@ -8,6 +8,8 @@
         
         <script src="react.production.min.js"></script>
         <script src="react-dom.production.min.js"></script>
+
+        <script src="Chart.min.js"></script>
         
         <!-- strftime.min.js Source from https://github.com/samsonjs/strftime -->
         <script src="strftime.min.js"></script>
@@ -28,6 +30,10 @@
                             <td><input type="datetime-local" id="filter_dtto"></td>
                         </tr>
                     </table>
+                    <button id="filter_lastHour">Last Hour</button><br>
+                    <button id="filter_24hrs">Last 24 Hours</button><br>
+                    <button id="filter_lastwk">Last Week</button><br>
+                    <button id="filter_thismonth">This Month</button>
                 </div>
                 <div class="filter" id="hostname">
 
@@ -45,12 +51,24 @@
             </div>
         </div>
         <br>
+        <div class="statistics">
+            <div id="stat_facility">
+                Facility
+                <canvas id="stat_facility_chart"></canvas>
+            </div>
+            <div id="stat_severity">
+                Severity
+                <canvas id="stat_severity_chart"></canvas>
+            </div>
+            <div id="stat_host">
+                Source host
+                <canvas id="stat_host_chart"></canvas>
+            </div>
+        </div>
         <div class="content" >
             
         </div>
         <script>
-            $("#filter_dtfrom")[0].value = strftime("%Y-%m-%dT%H:%M:%S", new Date(Date.now() - 86400000 * 7));
-            $("#filter_dtto")[0].value = strftime("%Y-%m-%dT%H:%M:%S", new Date(Date.now()));
             $("button.foldButton").on("click", function(e){
                 a = e.target.parentElement.querySelector("div.foldcontent").style.display;
                 e.target.parentElement.querySelector("div.foldcontent").style.display = (a=="none"||a==""?"flex":"none");

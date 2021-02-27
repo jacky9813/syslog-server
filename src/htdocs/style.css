@@ -36,6 +36,15 @@ div.fold{
     border-radius: 5px;
 }
 
+/** chart style */
+div.statistics{
+    text-align: center;
+    margin-bottom: 35px;
+}
+div.statistics div{
+    display: inline-block;
+}
+
 /** Data table Style */
 div.content table{
     border-collapse: collapse;
