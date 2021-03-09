@@ -255,7 +255,7 @@ class RFC3164():
         process_re = re.match(  (r"<[0-9]{1,3}>" if not nopri else "") +
                                 (r"[A-Z][a-z]{2} *[0-9]{1,2} *[0-9]{2}:[0-9]{2}:[0-9]{2}" if not notime else "") + 
                                 (r" *[a-zA-Z0-9][a-zA-Z0-9:\.\-]*" if not nohostname else "") + 
-                                r" *([a-zA-Z0-9]+)", msg)
+                                r" *([a-zA-Z0-9\-\.\/]+)", msg)
         if process_re is not None:
             process = process_re.groups()[0]
             noprocess = False
@@ -266,7 +266,7 @@ class RFC3164():
         msg_re = re.match(  (r"<[0-9]{1,3}>" if not nopri else "") +
                             (r"[A-Z][a-z]{2} *[0-9]{1,2} *[0-9]{2}:[0-9]{2}:[0-9]{2}" if not notime else "") + 
                             (r" *[a-zA-Z0-9][a-zA-Z0-9:\.\-]*" if not nohostname else "") + 
-                            (r" *[a-zA-Z0-9]*" if not noprocess else "") + 
+                            (r" *[a-zA-Z0-9\-\.\/]*" if not noprocess else "") + 
                             r"(.+)", msg)
         
         if msg_re is not None:
