@@ -4,7 +4,7 @@ BASEDIR=/syslog-server
 APACHE_PID_FILE=/var/run/apache2/apache2.pid
 if [ -f "$APACHE_PID_FILE" ]; then
     if [ ! -d "/proc/$(<$APACHE_PID_FILE)"]; then
-        
+        rm $APACHE_PID_FILE
     fi
 fi
 
