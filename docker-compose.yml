@@ -10,5 +10,6 @@ services:
       - "8765:80/tcp"
     volumes:
       - "./conf/syslog-server.json:/syslog-server/config.json"
-      - "./conf/httpd.conf:/usr/local/apache2/conf/httpd.conf"
+      - "./conf/apache2.conf:/etc/apache2/apache2.conf"
+      - "./conf/000-default.conf:/etc/apache2/sites-available/000-default.conf"
       - "./db:/var/lib/mongodb"

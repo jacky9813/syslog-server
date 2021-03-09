@@ -15,12 +15,17 @@ RUN mkdir /syslog-server && \
 EXPOSE 514/udp 80/tcp
 WORKDIR /syslog-server
 
-COPY conf/httpd.conf /usr/local/apache2/conf/httpd.conf
+#COPY conf/httpd.conf /usr/local/apache2/conf/httpd.conf
 # Using MongoDB default config file
 COPY src/cgi-bin /usr/local/apache2/cgi-bin
 COPY src/syslog-server /syslog-server
 COPY src/htdocs /usr/local/apache2/htdocs
 # 
 COPY src/httpd/httpd-foreground /usr/local/bin/
+COPY conf/apache2.conf /etc/apache2/apache2.conf
+COPY conf/000-default.conf /etc/apache2/sites-available/000-default.conf
+RUN ln -s /etc/apache2/mods-available/cgi.load /etc/apache2/mods-enabled/cgi.load && \
+    rm /etc/apache2/conf-enabled/other-vhosts-access-log.conf &&\
+    mkdir /var/run/apache2
 
 CMD ["/syslog-server/startServer.sh"]
